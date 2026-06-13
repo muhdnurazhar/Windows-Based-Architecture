@@ -7,6 +7,11 @@ This repository showcases simulation of the deployment of a resilent, secure mul
 ### Project Objective & Site Breakdown
 The infrastructure has been divided across network into 3 segments:
 
+
+### Technical Architecture & Implementation Workflow
+
+<img width="1440" height="598" alt="image" src="https://github.com/user-attachments/assets/9f32a3ef-122b-4c7c-8825-68fb5198fc27" />
+
 1. A-HEADQUARTERS (wsmb2026.my)
 > Acts as the central of core identity management, security enforcement, and federated access control
    * **Identity Management:** Deploys Primary ADDS with appropriate parameter Powershell for bulk-user creation specifc for provisioning framework.
@@ -25,6 +30,3 @@ The infrastructure has been divided across network into 3 segments:
    *  **Root Certificate Authority:** Set up a standalone Root CA (ISP-CA) to issue certificates for enterprise systems.
    *  **Secure VPN Tunnels:** Configured Windows RRAS to run IKEV2 IPsec site-to-site VPN tunnels between Headquarters and Branch using certificates for authentication.
 
-### Technical Architecture & Implementation Workflow
-
-<img width="1440" height="598" alt="image" src="https://github.com/user-attachments/assets/9f32a3ef-122b-4c7c-8825-68fb5198fc27" />
