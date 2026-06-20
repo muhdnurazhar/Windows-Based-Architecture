@@ -244,25 +244,15 @@ PingReplyDetails (RTT) : 1 ms
 
 ---
 
+---
+
 ## Conclusion Summary
 
-### 1. Enterprise Value & Infrastructure Resiliency
-The successful deployment and validation of this multi-site architecture prove the execution of solid enterprise-grade design choices:
-* **High Availability & Fault Tolerance:** Active Directory inbound replication across sites and a **RAID 5 network storage system** guarantee that identity services and corporate data remain fully operational during sudden hardware or link failures.
-* **Massive Resource Optimization:** Implementing **Data Deduplication** on the local fileserver achieved an immediate **42% storage capacity saving** (reclaiming 660.31 MB from a small 1GB block simulation). Scaled up to a larger production environment, this translates directly to saving terabytes of cloud or physical storage costs.
+This project successfully demonstrates a secure, high-availability, and automated multi-site enterprise infrastructure. By integrating Windows Server 2022 with Linux Ansible automation, the architecture delivers three core values:
 
-### 2. Modern Security Framework (Zero-Trust Ready)
-Traditional passwords and open internet links are highly vulnerable. This architecture actively defends against modern security risks through:
-* **Cryptographic Identity Control:** Centralized **Enterprise PKI Sijil (ADCS)** automates certificate lifecycle enrollments for all corporate servers and machines.
-* **Federated Single Sign-On (SSO):** Deployed **ADFS infrastructure** allows remote workers to safely log into web applications via secure security tokens, reducing password fatigue and mitigating phishing vectors.
-* **Ironclad Perimeter Protection:** All branch-to-HQ communication paths are securely wrapped inside an automatic, persistent **IKEv2 IPsec VPN Tunnel**, making all traffic passing through the public internet unreadable to external attackers.
-
-### 3. Scalable Cross-Platform Automation
-By utilizing **Debian Linux control nodes powered by Ansible** to push configurations down to **Windows Domain Controllers (WinRM over HTTPS)**, this project demonstrates a mature deployment methodology. Eliminating manual "click-and-configure" administration prevents configuration drift, stops human operational errors, and allows a single engineer to deploy, secure, and monitor enterprise systems seamlessly.
-
-
-
-
+* **Resiliency & Cost Optimization:** Cross-site Active Directory replication and RAID 5 storage guarantee zero downtime during link failures. Additionally, configuring Data Deduplication optimized storage capacity by immediately saving **42% of disk space**.
+* **Enterprise-Grade Security:** The environment moves toward a Zero-Trust model by replacing weak entry points with automated **Enterprise PKI Certificates (ADCS)**, secure **Federated Single Sign-On (ADFS)** tokens, and a persistent **IKEv2 IPsec VPN Tunnel** to encrypt all traffic across the public internet.
+* **Modern IT Automation:** Utilizing Linux Ansible control nodes to configure Windows systems via WinRM over HTTPS eliminates manual configuration errors, prevents security drift, and ensures the entire network can be deployed cleanly and scaled efficiently.
 
 
 
