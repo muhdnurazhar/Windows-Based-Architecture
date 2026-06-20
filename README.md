@@ -96,6 +96,8 @@ WSMB_Managers: WSMB_Managers -- Auto-Enroll
 ```
 <img width="937" height="577" alt="Screenshot from 2026-06-20 14-59-50" src="https://github.com/user-attachments/assets/847ab9b0-2cc0-4dd8-907b-f8f92a7adef2" />
 
+<img width="508" height="687" alt="image" src="https://github.com/user-attachments/assets/877b3edc-9d38-4cd6-a427-3238886995a6" />
+
 
 
 
