@@ -157,3 +157,112 @@ PLAY RECAP *********************************************************************
 BR-DC                      : ok=5    changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
 ```
 
+### Verification 3: Data & Storage Management Infrastructure
+* **What & Why:** Validating enterprise storage reliability, block-level capacity optimization via Data Deduplication, and centralized access paths using Distributed File System (DFS).
+* **Verification & Expected Logs:**
+
+#### *Verify RAID 5 Volume Status and Operational Health on HQ-FILE*
+```powershell
+PS G:\> Get-Volume -DriveLetter G | Select-Object DriveLetter, FileSystemType, HealthStatus, SizeRemaining
+
+DriveLetter FileSystemType HealthStatus SizeRemaining
+----------- -------------- ------------ -------------
+          G NTFS           Healthy         1573298176
+```
+
+
+#### *Verify Data Deduplication Schedule and Volume Optimization Status on HQ-FILE*
+```powershell
+PS G:\> Get-DedupVolume -Volume G:
+
+Enabled            UsageType          SavedSpace           SavingsRate          Volume
+-------            ---------          ----------           -----------          ------
+True               Default            660.31 MB            42 %                 G:
+
+PS G:\> Get-DedupSchedule
+
+Enabled    Type               StartTime              Days               Name
+-------    ----               ---------              ----               ----
+True       Optimization                                                 BackgroundOptimization
+True       Optimization       12:00 AM               {Sunday, Monday... ThroughputOptimization
+True       GarbageCollection  2:45 AM                Saturday           WeeklyGarbageCollection
+True       Scrubbing          3:45 AM                Saturday           WeeklyScrubbing
+```
+
+#### *Verify Distributed File System (DFS) Active Namespaces Links on HQ-FILE*
+```powershell
+PS G:\> Get-DfsnRoot -Path "\\wsmb2026.my\fileshare"
+
+Path                    Type      Properties   TimeToLiveSec State  Description
+----                    ----      ----------   ------------- -----  -----------
+\\wsmb2026.my\fileshare Domain V2 Site Costing 300           Online
+
+
+PS G:\> Get-DfsnFolder -Path "\\wsmb2026.my\fileshare\*" | Select-Object Path, Targetpath, State
+
+Path                           Targetpath State
+----                           ---------- -----
+\\wsmb2026.my\fileshare\public            Online
+\\wsmb2026.my\fileshare\wsmb              Online
+
+```
+
+### Verification 4: Edge Routing & VPN Transit Infrastructure
+* **What & Why:** Verifying secure edge perimeter boundaries, internal network address translation (NAT), and persistent IPsec IKEv2 Site-to-Site VPN tunnels secured via Enterprise PKI certificates.
+* **Verification & Expected Logs:**
+
+#### *Check the operational state and persistence of the Site-to-Site VPN interface on both HQ-EDGE & BR-EDGE*
+```powershell
+PS C:\> Get-VpnS2SInterface -Name "vpn" | Select-Object Name, ConnectionState, AuthenticationMethod, IsPersistent
+
+Name ConnectionState AuthenticationMethod IsPersistent
+---- --------------- -------------------- ------------
+vpn  Connected       MachineCertificates
+```
+
+#### *Verify Edge IP Routing and Public/Internal Interface Configuration*
+```powershell
+PS C:\> Get-NetIPAddress -InterfaceAlias "Ethernet0", "Ethernet1" -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress, IPv4Address, PrefixLength
+
+InterfaceAlias IPAddress   IPv4Address PrefixLength
+-------------- ---------   ----------- ------------
+Ethernet1      1.9.250.110 1.9.250.110           28
+Ethernet0      172.30.1.1  172.30.1.1            24
+```
+
+
+#### *Validate secure cross-site ICMP reachability through the active VPN tunnel from HQ-EDGE into Branch corporation*
+```powershell
+PS C:\> Test-NetConnection -ComputerName "172.30.1.100"                                                                                                                                                                                         
+ComputerName           : 172.30.1.100
+RemoteAddress          : 172.30.1.100
+InterfaceAlias         : vpn
+SourceAddress          : 169.254.33.243
+PingSucceeded          : True
+PingReplyDetails (RTT) : 1 ms
+```
+
+---
+
+## Conclusion Summary
+
+### 1. Enterprise Value & Infrastructure Resiliency
+The successful deployment and validation of this multi-site architecture prove the execution of solid enterprise-grade design choices:
+* **High Availability & Fault Tolerance:** Active Directory inbound replication across sites and a **RAID 5 network storage system** guarantee that identity services and corporate data remain fully operational during sudden hardware or link failures.
+* **Massive Resource Optimization:** Implementing **Data Deduplication** on the local fileserver achieved an immediate **42% storage capacity saving** (reclaiming 660.31 MB from a small 1GB block simulation). Scaled up to a larger production environment, this translates directly to saving terabytes of cloud or physical storage costs.
+
+### 2. Modern Security Framework (Zero-Trust Ready)
+Traditional passwords and open internet links are highly vulnerable. This architecture actively defends against modern security risks through:
+* **Cryptographic Identity Control:** Centralized **Enterprise PKI Sijil (ADCS)** automates certificate lifecycle enrollments for all corporate servers and machines.
+* **Federated Single Sign-On (SSO):** Deployed **ADFS infrastructure** allows remote workers to safely log into web applications via secure security tokens, reducing password fatigue and mitigating phishing vectors.
+* **Ironclad Perimeter Protection:** All branch-to-HQ communication paths are securely wrapped inside an automatic, persistent **IKEv2 IPsec VPN Tunnel**, making all traffic passing through the public internet unreadable to external attackers.
+
+### 3. Scalable Cross-Platform Automation
+By utilizing **Debian Linux control nodes powered by Ansible** to push configurations down to **Windows Domain Controllers (WinRM over HTTPS)**, this project demonstrates a mature deployment methodology. Eliminating manual "click-and-configure" administration prevents configuration drift, stops human operational errors, and allows a single engineer to deploy, secure, and monitor enterprise systems seamlessly.
+
+
+
+
+
+
+
