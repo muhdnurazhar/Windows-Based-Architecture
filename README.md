@@ -44,3 +44,66 @@ To design and deploy a secure, multi-site enterprise infrastructure that connect
    *  **Root Certificate Authority:** Set up a standalone Root CA (ISP-CA) to issue certificates for enterprise systems.
    *  **Secure VPN Tunnels:** Configured Windows RRAS to run IKEV2 IPsec site-to-site VPN tunnels between Headquarters and Branch using certificates for authentication.
 
+
+### Verification 1: Identity & Secure Authentication (ADDS, ADCS, ADFS)
+* **What & Why:** Verifying that the multi-tier Active Directory environment authenticates users globally, enterprise certificates auto-enroll securely, and federated SSO tokens generate without errors.
+* **Chaining:** Confirms that Objective 1 is met by validating Active Directory Domain Services (ADDS) replication health, Active Directory Certificate Services (ADCS) template isolation boundaries, and Active Directory Federation Services (ADFS) endpoint responses.
+* **Verification & Expected Logs:**
+
+#### *Check inbound replication summary and core domain controller health status*
+```powershell
+PS C:\Users\Administrator> repadmin /showrepl
+
+Repadmin: running command /showrepl against full DC localhost
+Default-First-Site-Name\HQ-DC
+DSA Options: IS_GC
+Site Options: (none)
+DSA object GUID: ecf173e0-9f8d-42e3-a2f0-6e5d2000738b
+DSA invocationID: ecf173e0-9f8d-42e3-a2f0-6e5d2000738b
+
+==== INBOUND NEIGHBORS ======================================
+
+CN=Configuration,DC=wsmb2026,DC=my
+    Default-First-Site-Name\BR-DC via RPC
+        DSA object GUID: 115646ef-7a16-4c29-a3a5-12513dd9afd4
+        Last attempt @ 2026-06-20 14:12:41 was successful.
+
+CN=Schema,CN=Configuration,DC=wsmb2026,DC=my
+    Default-First-Site-Name\BR-DC via RPC
+        DSA object GUID: 115646ef-7a16-4c29-a3a5-12513dd9afd4
+        Last attempt @ 2026-06-20 13:55:31 was successful.
+
+DC=ForestDnsZones,DC=wsmb2026,DC=my
+    Default-First-Site-Name\BR-DC via RPC
+        DSA object GUID: 115646ef-7a16-4c29-a3a5-12513dd9afd4
+        Last attempt @ 2026-06-20 13:55:31 was successful.
+
+DC=branch,DC=wsmb2026,DC=my
+    Default-First-Site-Name\BR-DC via RPC
+        DSA object GUID: 115646ef-7a16-4c29-a3a5-12513dd9afd4
+        Last attempt @ 2026-06-20 14:19:07 was successful.
+
+PS C:\Users\Administrator>
+```
+
+#### *Verify active custom templates published on the CA and audit enrollment permission blocks*
+```powershell
+PS C:\> certutil -catemplates | Select-String "WSMB_"
+
+WSMB_VPN: WSMB_VPN -- Auto-Enroll
+WSMB_Servers: WSMB_Servers -- Auto-Enroll
+WSMB_Managers: WSMB_Managers -- Auto-Enroll
+```
+<img width="937" height="577" alt="Screenshot from 2026-06-20 14-59-50" src="https://github.com/user-attachments/assets/847ab9b0-2cc0-4dd8-907b-f8f92a7adef2" />
+
+
+
+
+#### *Test secure Active Directory Federation Services (ADFS) sign-in page reachability*
+```powershell
+PS C:\> Test-NetConnection -ComputerName "adfs.wsmb2026.my" -Port 443 | Select-Object ComputerName, RemoteAddress, TcpTestSucceeded
+
+ComputerName     RemoteAddress TcpTestSucceeded                                                                                                       ------------     ------------- ----------------                                                                                                       adfs.wsmb2026.my 172.20.100.20             True  
+```
+<img width="1294" height="733" alt="image" src="https://github.com/user-attachments/assets/e661dfa6-f9a6-4d0d-8305-8dd1e65d80d1" />
+
