@@ -109,3 +109,51 @@ ComputerName     RemoteAddress TcpTestSucceeded                                 
 ```
 <img width="1294" height="733" alt="image" src="https://github.com/user-attachments/assets/e661dfa6-f9a6-4d0d-8305-8dd1e65d80d1" />
 
+### Verification 2: Automated Infrastructure & Storage Access Control (Ansible)
+* **What & Why:** Enforcing consistent enterprise storage structures and explicit ACL security boundaries across target Windows Domain Controllers using a Linux Ansible Control Node to eliminate manual permission drift.
+* **Verification & Expected Logs:**
+ 
+```bash
+# Run the deployment playbook from the Linux Ansible Control Node
+root@itnsa:/opt/ansible# ansible-playbook manage-shares.yml --check
+
+PLAY [manage-shares.yml] ***********************************************************************************************************************************************************
+
+TASK [Create a new group] **********************************************************************************************************************************************************
+ok: [BR-DC] => (item={'key': 'wsmbone', 'value': None})
+ok: [BR-DC] => (item={'key': 'wsmbtwo', 'value': None})
+ok: [BR-DC] => (item={'key': 'wsmbthree', 'value': None})
+
+TASK [Create folder] ***************************************************************************************************************************************************************
+ok: [BR-DC]
+
+TASK [Share Everyone] **************************************************************************************************************************************************************
+ok: [BR-DC]
+
+TASK [Create Folder for Variables] *************************************************************************************************************************************************
+ok: [BR-DC] => (item={'key': 'share01', 'value': {'name': 'wsmb_share01', 'read': 'wsmbone', 'write': 'wsmbtwo'}})
+ok: [BR-DC] => (item={'key': 'share02', 'value': {'name': 'wsmb_share02', 'read': 'wsmbtwo', 'write': 'wsmbthree'}})
+
+TASK [Remove Inheritance Variables] ************************************************************************************************************************************************
+ok: [BR-DC] => (item={'key': 'share01', 'value': {'name': 'wsmb_share01', 'read': 'wsmbone', 'write': 'wsmbtwo'}})
+ok: [BR-DC] => (item={'key': 'share02', 'value': {'name': 'wsmb_share02', 'read': 'wsmbtwo', 'write': 'wsmbthree'}})
+
+TASK [Add Admin Account to Variables] **********************************************************************************************************************************************
+skipping: [BR-DC] => (item={'key': 'share01', 'value': {'name': 'wsmb_share01', 'read': 'wsmbone', 'write': 'wsmbtwo'}}) 
+skipping: [BR-DC] => (item={'key': 'share02', 'value': {'name': 'wsmb_share02', 'read': 'wsmbtwo', 'write': 'wsmbthree'}}) 
+skipping: [BR-DC]
+
+TASK [Setup Read Access for Variables] *********************************************************************************************************************************************
+skipping: [BR-DC] => (item={'key': 'share01', 'value': {'name': 'wsmb_share01', 'read': 'wsmbone', 'write': 'wsmbtwo'}}) 
+skipping: [BR-DC] => (item={'key': 'share02', 'value': {'name': 'wsmb_share02', 'read': 'wsmbtwo', 'write': 'wsmbthree'}}) 
+skipping: [BR-DC]
+
+TASK [Setup Modify access for Variables] *******************************************************************************************************************************************
+skipping: [BR-DC] => (item={'key': 'share01', 'value': {'name': 'wsmb_share01', 'read': 'wsmbone', 'write': 'wsmbtwo'}}) 
+skipping: [BR-DC] => (item={'key': 'share02', 'value': {'name': 'wsmb_share02', 'read': 'wsmbtwo', 'write': 'wsmbthree'}}) 
+skipping: [BR-DC]
+
+PLAY RECAP *************************************************************************************************************************************************************************
+BR-DC                      : ok=5    changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0   
+```
+
