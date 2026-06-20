@@ -1,0 +1,12 @@
+---
+windows:
+  hosts:
+    BR-DC:
+      ansible_host: BR-DC.BRANCH.WSMB2026.MY
+      ansible_user: administrator@BRANCH.WSMB2026.MY
+      ansible_password: Skills39
+      ansible_connection: winrm
+      ansible_winrm_transport: kerberos
+      ansible_winrm_server_cert_validation: ignore
+
+

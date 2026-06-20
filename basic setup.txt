@@ -1,0 +1,15 @@
+synchronize with guest time
+tzutil /s "Singapore Standard Time"
+
+netsh i i s a ethernet0 s 1.9.250.100 255.255.255.240 1.9.250.100
+netsh i i s a ethernet1 s 202.188.1.100 255.255.255.0 202.188.1.100
+netsh i i a dnsserver ethernet0 172.20.100.100 validate=no
+enable-netfirewallrule FPS-*
+rename-computer INET -restart
+
+GPO enable inbound firewall internally 172.20.100.0/24
+
+
+
+
+

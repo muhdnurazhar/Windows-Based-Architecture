@@ -1,0 +1,13 @@
+file_shares:
+  share01: 
+    name: "wsmb_share01"
+    read: "wsmbone"
+    write: "wsmbtwo"
+  share02: 
+    name: "wsmb_share02"
+    read: "wsmbtwo"
+    write: "wsmbthree"
+file_groups: 
+  wsmbone:
+  wsmbtwo:
+  wsmbthree: 

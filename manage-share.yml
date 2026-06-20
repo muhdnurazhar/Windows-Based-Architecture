@@ -1,0 +1,63 @@
+---
+- name: manage-shares.yml
+  hosts: windows
+  gather_facts: false
+  tasks: 
+  
+    - name: Create a new group
+      ansible.windows.win_group:
+        name: "{{ item.key }}"
+        state: present
+      loop: "{{ file_groups | dict2items }}"
+
+    - name: Create folder
+      ansible.windows.win_file:
+        path: C:\project_share
+        state: directory
+
+    - name: Share Everyone
+      ansible.windows.win_share:
+        name: project_share
+        path: C:\project_share
+        full: Everyone
+
+    - name: Create Folder for Variables
+      ansible.windows.win_file:
+        path: C:\project_share\{{ item.value.name }}
+        state: directory
+      loop: "{{ file_shares | dict2items }}"
+
+    - name: Remove Inheritance Variables
+      ansible.windows.win_acl_inheritance:
+        path: C:\project_share\{{ item.value.name }}
+        state: absent
+        reorganize: false
+      loop: "{{ file_shares | dict2items }}"
+
+    - name: Add Admin Account to Variables
+      ansible.windows.win_acl:
+        path: C:\project_share\{{ item.value.name }}
+        user: BUILTIN\Administrators
+        rights: FullControl
+        type: allow
+        state: present
+      loop: "{{ file_shares | dict2items }}"
+
+    - name: Setup Read Access for Variables
+      ansible.windows.win_acl:
+        user: "{{ item.value.read }}"
+        path: C:\project_share\{{ item.value.name }}
+        type: allow
+        rights: ReadAndExecute
+      loop: "{{ file_shares | dict2items }}"
+
+    - name: Setup Modify access for Variables
+      ansible.windows.win_acl:
+        user: "{{ item.value.write }}"
+        path: C:\project_share\{{ item.value.name }}
+        type: allow
+        rights: Modify
+      loop: "{{ file_shares | dict2items }}"
+
+        
+
